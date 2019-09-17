@@ -29,7 +29,7 @@ vec,role,label=rm.role_magnet(G, balance=b)
 `balance` is optional. If node weight is insignificant in your network,  just run:
 
 ```python
-vec,role,label=rm.role_magnet(G, balance=b)
+vec,role,label=rm.role_magnet(G)
 ```
 
 Other optional parameters:
