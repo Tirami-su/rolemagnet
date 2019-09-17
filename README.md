@@ -4,9 +4,9 @@ Role Magnet is a method of  role clustering for flow networks.
 
 ### Introduction
 
-- **rolemagnet/**	  Source code folder
+- **rolemagnet/**    Source code folder
 
-- **experiment_*.ipynb**	  Experiments mentioned in the paper. You can learn how to use Role Magnet by reading them.
+- **experiment_*.ipynb**    Experiments mentioned in the paper. You can learn how to use Role Magnet by reading them.
 
 ### Prerequisites
 
@@ -34,8 +34,8 @@ vec,role,label=rm.role_magnet(G, balance=b)
 
 Other optional parameters:
 
-- shape	  Shape of competitive layer in SOM. If not provided, Role Magnet will compute according to the 				 distribution of data.
-- sample    Evenly spaced sampling points. Default is `np.linspace(0,100,25)`.
+- **shape**	  Shape of competitive layer in SOM. If not provided, Role Magnet will compute according to the 				 distribution of data.
+- **sample**    Evenly spaced sampling points. Default is `np.linspace(0,100,25)`.
 
 ### Acknowledgements
 
