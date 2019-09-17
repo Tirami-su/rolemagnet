@@ -51,7 +51,7 @@ chi_queue = multiprocessing.Queue()# 子进程的输出队列
 def role_magnet(G, balance=None, sample=np.linspace(0,100,25), shape=None):
     '''
     参数
-    G       图，networkx的Graph/DiGraph
+    G       图，networkx的DiGraph
     balance 出入流量差
     sample  采样点
     shape   SOM竞争层的形状
