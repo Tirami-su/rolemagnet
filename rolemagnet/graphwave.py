@@ -9,8 +9,8 @@ import scipy as sc
 # from sklearn.cluster import KMeans
 # import sys, os
 
-from .characteristic_functions import *
-from .graph_tools import laplacian
+# from .characteristic_functions import *
+# from .graph_tools import laplacian
 
 
 TAUS = [1, 10, 25, 50]
@@ -20,6 +20,44 @@ ETA_MAX = 0.95
 ETA_MIN = 0.80
 NB_FILTERS = 2
 
+def laplacian(a):
+    n_nodes, _ = a.shape
+    posinv = np.vectorize(lambda x:  float(1.0)/np.sqrt(x) if x>1e-10 else 0.0)
+    d = sc.sparse.diags(np.array(posinv(a.sum(0))).reshape([-1,]),0)
+    lap = sc.sparse.eye(n_nodes) - d.dot(a.dot(d))
+    return lap
+
+def charac_function(temp, node, time_points):
+    temp2 = temp.T.tolil()
+    d = temp2.data
+    n_timepnts = len(time_points)
+    n_nodes = temp.shape[1]
+    final_sig = np.zeros((2 * n_timepnts, n_nodes))
+    zeros_vec = np.array([1.0 / n_nodes*(n_nodes - len(d[i])) for i in range(n_nodes)])
+
+    if (node==-1):
+        #逐列（点）计算实部
+        for i in range(n_nodes):
+            final_sig[::2, i] = zeros_vec[i] +\
+                                1.0 / n_nodes *\
+                                np.cos(np.einsum("i,j-> ij", time_points, np.array(d[i]))).sum(1)
+    else:
+        final_sig[::2, node] = zeros_vec[node] +\
+                    1.0 / n_nodes *\
+                    np.cos(np.einsum("i,j-> ij", time_points, np.array(d[node]))).sum(1)
+                
+#   逐行（t）计算虚部
+    for it_t, t in enumerate(time_points):
+        final_sig[it_t * 2 + 1, :] = 1.0 / n_nodes * ((t*temp).sin().sum(0))
+
+    return final_sig
+
+# heat是一个数组，每一个元素是一个 Ψ (spectral graph wavelet矩阵), s 取不同值时对应不同的 Ψ 
+def charac_function_multiscale(heat, node, time_points):
+    final_sig = []
+    for i in heat.keys():
+        final_sig.append(charac_function(heat[i], node, time_points))
+    return np.vstack(final_sig).T
 
 def compute_cheb_coeff(scale, order):
     coeffs = [(-scale)**k * 1.0 / math.factorial(k) for k in range(order + 1)]

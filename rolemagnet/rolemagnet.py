@@ -2,14 +2,14 @@
 import numpy as np
 import networkx as nx
 import queue
-from graphwave.graphwave import *
+from .graphwave import *
 
 import multiprocessing, time
 
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-from som import SOM
+from .som import SOM
 
 def sub_graph(G, node, g, que, checked):
     que.put(node)
@@ -48,7 +48,7 @@ def embed(G, rev_G, sample, index, curNode):
 
 chi_queue = multiprocessing.Queue()# 子进程的输出队列
 
-def role_magnet(G, balance, sample, shape):
+def role_magnet(G, balance=None, sample=np.linspace(0,100,25), shape=None):
     '''
     参数
     G       图，networkx的Graph/DiGraph
@@ -85,12 +85,20 @@ def role_magnet(G, balance, sample, shape):
         print('Embedding: %5.2f%%  %c' %(finished/total*100, character[count%4]), end='\r')
         count+=1
         time.sleep(1)
-
+    print()
+    
     # 降到二维，加上流量差
-    reduced_pca=PCA(n_components=2).fit_transform(StandardScaler().fit_transform(chi))
-    balance=np.array(balance).reshape(len(balance),1)
-    vec=np.concatenate((reduced_pca, balance), axis=1)
+    reduced=PCA(n_components=2).fit_transform(StandardScaler().fit_transform(chi))
+    vec=reduced
+    if balance!=None:
+        # 调整流量差的分布
+        balance=np.array(balance).reshape(len(balance),1)
+        chi_t=np.transpose(reduced)
+        balance=(max(chi_t[0])-min(chi_t[0])+max(chi_t[1])-min(chi_t[1]))/2*balance
+        vec=np.concatenate((reduced, balance), axis=1)
+        # 再降到二维
+        reduced=PCA(n_components=2).fit_transform(StandardScaler().fit_transform(vec))
 
-    som=SOM(shape, vec)
+    som=SOM(reduced, shape)
     role,label=som.run()
     return vec,role,label
