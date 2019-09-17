@@ -4,9 +4,9 @@ Role Magnet is a method of  role clustering for flow networks.
 
 ### Introduction
 
-- **rolemagnet/**	Source code folder
+- **rolemagnet/**	  Source code folder
 
-- **experiment_*.ipynb**	Experiments mentioned in the paper. You can learn how to use Role Magnet by reading them.
+- **experiment_*.ipynb**	  Experiments mentioned in the paper. You can learn how to use Role Magnet by reading them.
 
 ### Prerequisites
 
@@ -28,7 +28,7 @@ vec,role,label=rm.role_magnet(G, balance=b)
 
 `balance` is optional. If node weight is insignificant in your network,  just run:
 
-```pyth
+```python
 vec,role,label=rm.role_magnet(G, balance=b)
 ```
 
