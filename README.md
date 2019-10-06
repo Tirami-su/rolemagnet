@@ -1,6 +1,6 @@
-# Role Magnet
+# RoleMagnet
 
-Role Magnet is a method of  role clustering for flow networks.
+RoleMagnet is a method of  role clustering for flow networks.
 
 ### Introduction
 
@@ -34,7 +34,7 @@ vec,role,label=rm.role_magnet(G)
 
 Other optional parameters:
 
-- **shape**	  Shape of competitive layer in SOM. If not provided, Role Magnet will compute according to the 				 distribution of data.
+- **shape**	  The shape of competitive layer in SOM. If not provided, Role Magnet will compute according to the distribution of data.
 - **sample**    Evenly spaced sampling points. Default is `np.linspace(0,100,25)`.
 
 ### Acknowledgements
@@ -43,5 +43,5 @@ We would like to thank the authors of [struc2vec](https://github.com/leoribeiro/
 
 ### License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Tirami-su/rolemagnet/blob/master/README.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Tirami-su/rolemagnet/blob/master/LICENSE.md) file for details.
 

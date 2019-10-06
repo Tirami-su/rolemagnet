@@ -35,13 +35,13 @@ def embed(G, rev_G, sample, index, curNode):
     gat = nx.Graph()
     gat.add_nodes_from(G)      
     sub_graph(rev_G, curNode, gat, search_queue, checked)
-    chi_gat, heat_print, taus = graphwave_alg(gat, sample, node=index, verbose=True)
+    chi_gat,_,_ = graphwave_alg(gat, sample, node=index, verbose=True)
     
     # 散图
     dif = nx.Graph()
     dif.add_nodes_from(G)
     sub_graph(G, curNode, dif, search_queue, checked)
-    chi_dif, heat_print, taus = graphwave_alg(dif, sample,  node=index, verbose=True)
+    chi_dif,_,_ = graphwave_alg(dif, sample,  node=index, verbose=True)
 
     # 把计算结果放入队列
     chi_queue.put([index, np.concatenate((chi_gat[index],chi_dif[index]), axis=0)])
@@ -90,7 +90,7 @@ def role_magnet(G, balance=None, sample=np.linspace(0,100,25), shape=None):
     # 降到二维，加上流量差
     reduced=PCA(n_components=2).fit_transform(StandardScaler().fit_transform(chi))
     vec=reduced
-    if balance!=None:
+    if not balance is None:
         # 调整流量差的分布
         balance=np.array(balance).reshape(len(balance),1)
         chi_t=np.transpose(reduced)
@@ -99,6 +99,7 @@ def role_magnet(G, balance=None, sample=np.linspace(0,100,25), shape=None):
         # 再降到二维
         reduced=PCA(n_components=2).fit_transform(StandardScaler().fit_transform(vec))
 
+    # mid_time=time.perf_counter()
     som=SOM(reduced, shape)
     role,label=som.run()
     return vec,role,label
