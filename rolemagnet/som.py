@@ -29,13 +29,13 @@ class SOM:
                 data_max[k]=a
             if b<data_min[k]:
                 data_min[k]=b
-        # 压缩数据
+        # 标准化数据
         self.data=np.array(data)
         size=[data_max[i]-data_min[i] for i in range(len(data_t))]
         data_max=np.array(data_max)
         data_min=np.array(data_min)
         size=np.array(size)
-        if max(size)>Max_size:
+        if max(size)>Max_size or max(size)<3:
             coeff=Max_size/max(size)
             self.data*=coeff
             size*=coeff
