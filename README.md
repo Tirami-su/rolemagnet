@@ -44,4 +44,4 @@ We would like to thank the authors of [struc2vec](https://github.com/leoribeiro/
 ### License
 
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Tirami-su/rolemagnet/blob/master/LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Tirami-su/rolemagnet/blob/master/LICENSE) file for details.
