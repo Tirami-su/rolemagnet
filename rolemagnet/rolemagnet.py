@@ -19,13 +19,11 @@ def sub_graph(G, node, g, que, checked):
     checked.clear()
         
 def search_adj(G, node, g, que, checked):
+    checked[node]=1#标记该点已搜索
     for k,v in G[node].items():
-        if k in checked:
-            continue
         g.add_weighted_edges_from([(node, k, v['weight'])])
-        que.put(k)    
-        
-    checked[node]=1#标记该点搜索完毕
+        if k not in checked:
+            que.put(k)    
 
 def embed(G, rev_G, sample, index, curNode):
     search_queue=queue.Queue()  

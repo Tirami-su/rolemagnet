@@ -3,9 +3,9 @@ import numpy as np
 import random
 
 # 参数
-Resolution=0.2
-Density=2
-Stable_line=2*Resolution*Resolution
+Resolution=0.5 #分辨率，即网格大小
+Density=2#竞争层神经元的密度
+Stable_line=0.5*Resolution*Resolution#sqrt(2)*(a/2)=a/sqrt(2)= sqrt(a^2/2)
 Learn_rate=0.5
 Max_size=10
 
@@ -18,7 +18,7 @@ class SOM:
         '''
         self.shape=shape
         
-        # 计算边界
+        # 获取数据分布范围，缩放数据
         data_t=np.transpose(data)
         data_max=[data_t[0][0]]*len(data_t)
         data_min=[data_t[0][0]]*len(data_t)
@@ -29,18 +29,29 @@ class SOM:
                 data_max[k]=a
             if b<data_min[k]:
                 data_min[k]=b
-        # 标准化数据
+        
         self.data=np.array(data)
         size=[data_max[i]-data_min[i] for i in range(len(data_t))]
         data_max=np.array(data_max)
         data_min=np.array(data_min)
         size=np.array(size)
-        if max(size)>Max_size or max(size)<3:
-            coeff=Max_size/max(size)
-            self.data*=coeff
-            size*=coeff
-            data_max*=coeff
-            data_min*=coeff
+        # if max(size)>Max_size or max(size)<3:
+        coeff=Max_size/max(size)
+        self.data*=coeff
+        size*=coeff
+        data_max*=coeff
+        data_min*=coeff
+
+        # 如果未指定竞争层形状，根据默认密度初始化
+        if shape==None:
+            self.shape=[int(i*Density) for i in size]
+            print('SOM shape:',self.shape)
+
+        # 估计训练次数
+        compete_sum=1 #竞争层总节点数
+        for i in self.shape:
+            compete_sum*=i
+        self.times=compete_sum*5
 
         if init=='random':
             # 计算边界
@@ -59,10 +70,6 @@ class SOM:
             self.weight*=data_max-data_min
             self.weight+=data_min
         elif init=='evenly':
-            # 如果未指定竞争层形状
-            if shape==None:
-                self.shape=[int(i*2) for i in size]
-                print('SOM shape:',self.shape)
             # 均匀分布初始化权值矩阵
             scale=[np.linspace(data_min[i],data_max[i],self.shape[i]) for i in range(len(data_t))]
             weight=[]
@@ -77,12 +84,6 @@ class SOM:
                 sample=data[random.randint(0, len(data)-1)]
                 weight.append(sample)
             self.weight=np.array(weight).astype(float)
-
-        # 估计训练次数
-        compete_sum=1 #竞争层总节点数
-        for i in self.shape:
-            compete_sum*=i
-        self.times=compete_sum*5
 
         # 初始化获胜神经元
         self.winner=[0]*len(data)
@@ -101,7 +102,7 @@ class SOM:
             # np.random.shuffle(self.train_data)
             for k,v in enumerate(self.data):
                 # 调整学习率和邻域大小
-                self.rate=0.5*np.power(np.e, -3*count/self.times)
+                self.rate=Learn_rate*np.power(np.e, -3*count/self.times)
                 self.radius=int(2*np.power(np.e, -2*count/self.times))
 
                 self.update_winner(k)
@@ -222,6 +223,6 @@ class SOM:
     def kohonen(self, w, d):
         new=self.weight[w]+self.rate*(self.data[d]-self.weight[w])
         delta=new-self.weight[w]
-        if delta.dot(delta)>self.line:
+        if delta.dot(delta)>self.line:#为了简化计算，直接用平方比较，line本身就是平方
             self.stable=False
-        self.weight[w]=2*np.around(new*0.5, decimals=1)#限制分辨率
+        self.weight[w]=5*np.around(new*0.2, decimals=1)#限制分辨率
